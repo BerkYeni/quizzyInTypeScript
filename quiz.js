@@ -21,7 +21,6 @@ class QuizGame {
                 if (!questions.length) {
                     throw new Error("No questions were provided");
                 }
-                ;
                 this.questions = questions;
                 this.currentQuestion = this.questions[0];
                 this.playingState = "playing";
@@ -44,7 +43,9 @@ class QuizGame {
             throw new Error("No more questions left");
         }
         const index = this.questions.indexOf(this.currentQuestion);
-        return index + 1 >= this.questions.length ? null : this.questions[index + 1];
+        return index + 1 >= this.questions.length
+            ? null
+            : this.questions[index + 1];
     }
     submitAnswer(answer) {
         if (!this.currentQuestion) {
@@ -245,11 +246,61 @@ class View {
 class Presenter {
     game;
     view;
+    placeholderQuestions;
     constructor(game, view) {
         this.game = game;
         this.view = view;
+        this.placeholderQuestions = [
+            {
+                questionText: "Which's the tallest mountain in the world?",
+                playerAnswer: null,
+                choices: [
+                    "Mountain Everest",
+                    "Matterhorn",
+                    "Mount Kilimanjaro",
+                    "Mount Fuji",
+                ],
+                correctAnswer: "Mountain Everest",
+            },
+            {
+                questionText: "Who's the actress that played Jane Smith in the movie Mr. & Mrs. Smith?",
+                playerAnswer: null,
+                choices: [
+                    "Helena Bonham Carter",
+                    "Reese Witherspoon",
+                    "Angelina Jolie",
+                    "Sandra Bullock",
+                ],
+                correctAnswer: "Angelina Jolie",
+            },
+            {
+                questionText: "Who's the singer of the song Smooth Criminal?",
+                playerAnswer: null,
+                choices: ["Michael Jackson", "Madonna", "Mariah Carey", "Garth Brooks"],
+                correctAnswer: "Michael Jackson",
+            },
+            {
+                questionText: "Who's the Serbian-American inventor known for his contributions to alternating current?",
+                playerAnswer: null,
+                choices: [
+                    "Henry Ford",
+                    "Nikola Tesla",
+                    "Alexander Graham Bell",
+                    "Steve Jobs",
+                ],
+                correctAnswer: "Nikola Tesla",
+            },
+            {
+                questionText: "Who's the Greek philosopher who wrote the Legend of Atlantis?",
+                playerAnswer: null,
+                choices: ["Plato", "Sun Tzu", "Bobby Hill", "Ibn Sina"],
+                correctAnswer: "Plato",
+            },
+        ];
         this.initializeEventListeners();
-        this.getQuestionsAndStartGame();
+        game.startGame(this.placeholderQuestions);
+        this.renderAll();
+        // this.getQuestionsAndStartGame();
     }
     renderAll() {
         this.renderLoading();
@@ -378,7 +429,7 @@ class Presenter {
         this.renderAll();
     }
     async getQuestionsAndStartGame() {
-        const response = await fetch('https://the-trivia-api.com/v2/questions');
+        const response = await fetch("insert api url");
         const questionsData = await response.json();
         const questions = questionsData.map((question) => {
             const randomIndex = Math.floor(Math.random() * question.incorrectAnswers.length);
