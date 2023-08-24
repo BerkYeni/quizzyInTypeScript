@@ -1,16 +1,16 @@
 // model
 interface Question {
-  questionText: string,
-  choices: string[],
-  correctAnswer: string,
-  playerAnswer: string | null,
+  questionText: string;
+  choices: string[];
+  correctAnswer: string;
+  playerAnswer: string | null;
 }
 
 type Result = "correct" | "wrong" | "empty";
 
 interface QuestionResult {
-  question: Question,
-  result: Result,
+  question: Question;
+  result: Result;
 }
 
 type PlayingState = "waiting for questions" | "playing" | "finished";
@@ -36,7 +36,9 @@ class QuizGame {
   public startGame(questions: Question[]): void {
     switch (this.playingState) {
       case "waiting for questions":
-        if (!questions.length) { throw new Error("No questions were provided"); };
+        if (!questions.length) {
+          throw new Error("No questions were provided");
+        }
         this.questions = questions;
         this.currentQuestion = this.questions[0];
         this.playingState = "playing";
@@ -58,16 +60,26 @@ class QuizGame {
   }
 
   private nextQuestion(): Question | null {
-    if (!this.currentQuestion) { throw new Error("No more questions left"); }
+    if (!this.currentQuestion) {
+      throw new Error("No more questions left");
+    }
     const index = this.questions.indexOf(this.currentQuestion);
-    return index + 1 >= this.questions.length ? null : this.questions[index + 1];
+    return index + 1 >= this.questions.length
+      ? null
+      : this.questions[index + 1];
   }
 
   public submitAnswer(answer: string): void {
-    if (!this.currentQuestion) { throw new Error("Can't submit null question"); }
-    if (!this.currentQuestion.choices.includes(answer)) { throw new Error("Invalid answer"); }
+    if (!this.currentQuestion) {
+      throw new Error("Can't submit null question");
+    }
+    if (!this.currentQuestion.choices.includes(answer)) {
+      throw new Error("Invalid answer");
+    }
     this.currentQuestion.playerAnswer = answer;
-    if (this.currentQuestion.correctAnswer === this.currentQuestion.playerAnswer) {
+    if (
+      this.currentQuestion.correctAnswer === this.currentQuestion.playerAnswer
+    ) {
       this.score += 1;
     }
   }
@@ -98,22 +110,26 @@ class QuizGame {
 
 function addClass(classToBeAdded: string, currentClass: string): string {
   const classes = currentClass.split(" ");
-  if (classes.includes(classToBeAdded)) { return currentClass; }
+  if (classes.includes(classToBeAdded)) {
+    return currentClass;
+  }
   return `${currentClass} ${classToBeAdded}`;
 }
 
 function removeClass(classToBeRemoved: string, currentClass: string): string {
   const classes = currentClass.split(" ");
-  if (!classes.includes(classToBeRemoved)) { return currentClass; }
+  if (!classes.includes(classToBeRemoved)) {
+    return currentClass;
+  }
   classes.splice(classes.indexOf(classToBeRemoved), 1);
   return classes.join(" ");
 }
 
 // view
 interface eventListenerMap {
-  choices?: Function,
-  nextQuestion?: Function,
-  playAgain?: Function,
+  choices?: Function;
+  nextQuestion?: Function;
+  playAgain?: Function;
 }
 
 class View {
@@ -135,7 +151,9 @@ class View {
       .map((id) => document.querySelector(id) as HTMLElement);
     this.gameOver = document.querySelector(".game-over") as HTMLElement;
     this.score = document.querySelector(".score") as HTMLElement;
-    this.nextQuestion = document.querySelector(".next-question-btn") as HTMLElement;
+    this.nextQuestion = document.querySelector(
+      ".next-question-btn"
+    ) as HTMLElement;
     this.loading = document.querySelector(".loading") as HTMLElement;
     this.question = document.querySelector(".question") as HTMLElement;
     this.playAgain = document.querySelector(".play-again") as HTMLElement;
@@ -150,7 +168,7 @@ class View {
   public displayChoices(choiceArray: string[]): void {
     this.choices.forEach((element, index) => {
       element.textContent = choiceArray[index];
-    })
+    });
   }
 
   public displayScore(score: number): void {
@@ -168,15 +186,15 @@ class View {
   public displayProgress(currentQuestionIndex: number): void {
     this.progressDots.forEach((dot, index) => {
       if (index < currentQuestionIndex) {
-        dot.setAttribute("class", addClass("progressed", dot.className))
+        dot.setAttribute("class", addClass("progressed", dot.className));
       } else {
-        dot.setAttribute("class", removeClass("progressed", dot.className))
+        dot.setAttribute("class", removeClass("progressed", dot.className));
       }
-    })
+    });
   }
 
   public initializeProgress(questionAmount: number): void {
-    this.progress = document.createElement("div") ;
+    this.progress = document.createElement("div");
     this.progress.setAttribute("class", "progress");
     for (let index = 0; index < questionAmount; index += 1) {
       const dot = document.createElement("div");
@@ -228,11 +246,17 @@ class View {
   }
 
   public exposeNextQuestion(): void {
-    this.nextQuestion.setAttribute("class", addClass("visible", this.nextQuestion.className));
+    this.nextQuestion.setAttribute(
+      "class",
+      addClass("visible", this.nextQuestion.className)
+    );
   }
 
   public hideNextQuestion(): void {
-    this.nextQuestion.setAttribute("class", removeClass("visible", this.nextQuestion.className));
+    this.nextQuestion.setAttribute(
+      "class",
+      removeClass("visible", this.nextQuestion.className)
+    );
   }
 
   public gameOverScreen(): void {
@@ -243,40 +267,61 @@ class View {
 
   public highlightCorrectAnswer(elementIndex: number): void {
     const element = this.choices[elementIndex];
-    element.setAttribute("class", addClass("correct-answer", element.className));
+    element.setAttribute(
+      "class",
+      addClass("correct-answer", element.className)
+    );
   }
 
   public dehighlightCorrectAnswer(): void {
     this.choices.forEach((choiceElement) => {
-      choiceElement.setAttribute("class", removeClass("correct-answer", choiceElement.className));
+      choiceElement.setAttribute(
+        "class",
+        removeClass("correct-answer", choiceElement.className)
+      );
     });
   }
 
   public highlightPlayerAnswerAsCorrect(elementIndex: number): void {
     const element = this.choices[elementIndex];
-    element.setAttribute("class", addClass("correct-player-answer", element.className));
+    element.setAttribute(
+      "class",
+      addClass("correct-player-answer", element.className)
+    );
   }
 
   public highlightPlayerAnswerAsWrong(elementIndex: number): void {
     const element = this.choices[elementIndex];
-    element.setAttribute("class", addClass("wrong-player-answer", element.className));
+    element.setAttribute(
+      "class",
+      addClass("wrong-player-answer", element.className)
+    );
   }
 
   public dehighlightPlayerAnswer(): void {
     this.choices.forEach((choiceElement) => {
-      choiceElement.setAttribute("class", removeClass("wrong-player-answer", choiceElement.className));
-      choiceElement.setAttribute("class", removeClass("correct-player-answer", choiceElement.className));
+      choiceElement.setAttribute(
+        "class",
+        removeClass("wrong-player-answer", choiceElement.className)
+      );
+      choiceElement.setAttribute(
+        "class",
+        removeClass("correct-player-answer", choiceElement.className)
+      );
     });
   }
 
-  public addEventListeners(eventListeners: eventListenerMap, context: unknown): void {
+  public addEventListeners(
+    eventListeners: eventListenerMap,
+    context: unknown
+  ): void {
     Object.entries(eventListeners).forEach((entry) => {
       const [elementName, callback] = entry;
       switch (elementName) {
         case "choices":
           this.choices.forEach((choiceElement) => {
             choiceElement.addEventListener("click", callback.bind(context));
-          })
+          });
           break;
 
         case "nextQuestion":
@@ -291,21 +336,75 @@ class View {
           throw new Error("invalid key");
           break;
       }
-    })
+    });
   }
 }
 
 class Presenter {
   private game: QuizGame;
   private view: View;
+  private placeholderQuestions: Question[];
 
   constructor(game: QuizGame, view: View) {
     this.game = game;
     this.view = view;
+    this.placeholderQuestions = [
+      {
+        questionText: "Which's the tallest mountain in the world?",
+        playerAnswer: null,
+        choices: [
+          "Mountain Everest",
+          "Matterhorn",
+          "Mount Kilimanjaro",
+          "Mount Fuji",
+        ],
+        correctAnswer: "Mountain Everest",
+      },
+      {
+        questionText:
+          "Who's the actress that played Jane Smith in the movie Mr. & Mrs. Smith?",
+        playerAnswer: null,
+        choices: [
+          "Helena Bonham Carter",
+          "Reese Witherspoon",
+          "Angelina Jolie",
+          "Sandra Bullock",
+        ],
+        correctAnswer: "Angelina Jolie",
+      },
+      {
+        questionText: "Who's the singer of the song Smooth Criminal?",
+        playerAnswer: null,
+        choices: ["Michael Jackson", "Madonna", "Mariah Carey", "Garth Brooks"],
+        correctAnswer: "Michael Jackson",
+      },
+      {
+        questionText:
+          "Who's the Serbian-American inventor known for his contributions to alternating current?",
+        playerAnswer: null,
+        choices: [
+          "Henry Ford",
+          "Nikola Tesla",
+          "Alexander Graham Bell",
+          "Steve Jobs",
+        ],
+        correctAnswer: "Nikola Tesla",
+      },
+      {
+        questionText:
+          "Who's the Greek philosopher who wrote the Legend of Atlantis?",
+        playerAnswer: null,
+        choices: ["Plato", "Sun Tzu", "Bobby Hill", "Ibn Sina"],
+        correctAnswer: "Plato",
+      },
+    ];
 
     this.initializeEventListeners();
 
-    this.getQuestionsAndStartGame();
+    game.startGame(this.placeholderQuestions);
+    this.renderAll();
+
+    // this.getQuestionsAndStartGame();
   }
 
   private renderAll(): void {
@@ -335,8 +434,12 @@ class Presenter {
         this.view.initializeProgress(this.game.getQuestions().length);
       }
       const currentQuestion = this.game.getCurrentQuestion();
-      if (!currentQuestion) { throw new Error("Current question must not be null"); }
-      this.view.displayProgress(this.game.getQuestions().indexOf(currentQuestion));
+      if (!currentQuestion) {
+        throw new Error("Current question must not be null");
+      }
+      this.view.displayProgress(
+        this.game.getQuestions().indexOf(currentQuestion)
+      );
       return;
     }
     this.view.hideProgress();
@@ -350,7 +453,9 @@ class Presenter {
 
   private renderNextQuestionBtn(): void {
     const currentQuestion = this.game.getCurrentQuestion();
-    if (!currentQuestion) { return; }
+    if (!currentQuestion) {
+      return;
+    }
     if (currentQuestion.playerAnswer === null) {
       this.view.hideNextQuestion();
       return;
@@ -360,7 +465,7 @@ class Presenter {
 
   private renderQuestionText(): void {
     const currentQuestion = this.game.getCurrentQuestion();
-    if (!currentQuestion) { 
+    if (!currentQuestion) {
       console.log("no current question");
       return;
     }
@@ -369,7 +474,7 @@ class Presenter {
 
   private renderChoices(): void {
     const currentQuestion = this.game.getCurrentQuestion();
-    if (!currentQuestion) { 
+    if (!currentQuestion) {
       console.log("no current question");
       return;
     }
@@ -382,7 +487,9 @@ class Presenter {
 
   private renderPlayerAnswerAndCorrectAnswer(): void {
     const currentQuestion = this.game.getCurrentQuestion();
-    if (!currentQuestion) { return; }
+    if (!currentQuestion) {
+      return;
+    }
     if (currentQuestion.playerAnswer === null) {
       this.view.dehighlightCorrectAnswer();
       this.view.dehighlightPlayerAnswer();
@@ -390,7 +497,9 @@ class Presenter {
     }
 
     const playerAnwserIndex = this.getChoiceIndex(currentQuestion.playerAnswer);
-    const correctAnwserIndex = this.getChoiceIndex(currentQuestion.correctAnswer);
+    const correctAnwserIndex = this.getChoiceIndex(
+      currentQuestion.correctAnswer
+    );
 
     this.view.highlightCorrectAnswer(correctAnwserIndex);
     if (currentQuestion.correctAnswer === currentQuestion.playerAnswer) {
@@ -403,16 +512,21 @@ class Presenter {
   private getChoiceIndex(choice: string): number {
     const choices = this.game.getCurrentQuestion()?.choices;
     const index = choices?.indexOf(choice);
-    if (index === undefined) { throw new Error("Invalid choice"); }
+    if (index === undefined) {
+      throw new Error("Invalid choice");
+    }
     return index;
   }
 
   private initializeEventListeners(): void {
-    this.view.addEventListeners({ 
-      choices: this.choiceCallback,
-      nextQuestion: this.nextQuestionCallback,
-      playAgain: this.playAgainCallback,
-    }, this);
+    this.view.addEventListeners(
+      {
+        choices: this.choiceCallback,
+        nextQuestion: this.nextQuestionCallback,
+        playAgain: this.playAgainCallback,
+      },
+      this
+    );
   }
 
   private nextQuestionCallback(): void {
@@ -426,8 +540,12 @@ class Presenter {
 
   private choiceCallback(event: MouseEvent): void {
     const currentQuestion = this.game.getCurrentQuestion();
-    if (!currentQuestion) { return; }
-    if (currentQuestion.playerAnswer !== null) { return; }
+    if (!currentQuestion) {
+      return;
+    }
+    if (currentQuestion.playerAnswer !== null) {
+      return;
+    }
     const target = event.target as HTMLElement;
     const answer = target.textContent ?? "";
     this.game.submitAnswer(answer);
@@ -438,10 +556,12 @@ class Presenter {
   }
 
   public async getQuestionsAndStartGame() {
-    const response = await fetch('https://the-trivia-api.com/v2/questions');
+    const response = await fetch("insert api url");
     const questionsData = await response.json();
     const questions = questionsData.map((question): Question => {
-      const randomIndex = Math.floor(Math.random() * question.incorrectAnswers.length);
+      const randomIndex = Math.floor(
+        Math.random() * question.incorrectAnswers.length
+      );
       const choices = question.incorrectAnswers;
       choices.splice(randomIndex, 0, question.correctAnswer);
       return {
@@ -450,7 +570,7 @@ class Presenter {
         playerAnswer: null,
         correctAnswer: question.correctAnswer,
       };
-    })
+    });
     game.startGame(questions);
     this.renderAll();
   }
